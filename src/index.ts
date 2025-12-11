@@ -1,21 +1,20 @@
 /**
- * Hospital Management System - Main Entry Point
+ * Main entry point for the Hospital Management System
+ * This file starts the web server for production deployment
  */
 
-// Export all models
-export * from './models';
+import { WebServer } from './web/server';
 
-// Export all services
-export * from './services';
+const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3000;
 
-// Export storage manager
-export { StorageManager } from './storage/StorageManager';
+async function main() {
+  try {
+    const server = new WebServer(PORT);
+    await server.start();
+  } catch (error) {
+    console.error('Failed to start server:', error);
+    process.exit(1);
+  }
+}
 
-// Export utilities
-export * from './utils';
-
-// Export system initialization
-export { initializeSystem, shutdownSystem, SystemServices } from './initialization';
-
-// Export CLI functionality
-export { HospitalCLI, startCLI } from './cli/index';
+main();

@@ -9,7 +9,8 @@
     "test:watch": "vitest",
     "cli": "npm run build && node dist/cli.js",
     "web": "npm run build && node dist/web.js",
-    "start": "npm run web"
+    "dev": "npm run web",
+    "start": "node dist/index.js"
   },
   "keywords": [
     "hospital",

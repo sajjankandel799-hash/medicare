@@ -1,28 +1,19 @@
-#!/usr/bin/env node
-
 /**
- * Hospital Management System Web Interface Entry Point
- * 
- * This file serves as the main entry point for the web interface.
- * Run with: npm run web
+ * Web server entry point for development
  */
 
 import { WebServer } from './web/server';
 
-// Handle graceful shutdown
-process.on('SIGINT', () => {
-  console.log('\n\n👋 Shutting down web server...');
-  process.exit(0);
-});
+const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3000;
 
-process.on('SIGTERM', () => {
-  console.log('\n\n👋 System shutdown requested. Goodbye!');
-  process.exit(0);
-});
+async function main() {
+  try {
+    const server = new WebServer(PORT);
+    await server.start();
+  } catch (error) {
+    console.error('Failed to start server:', error);
+    process.exit(1);
+  }
+}
 
-// Start the web server
-const server = new WebServer(3000);
-server.start().catch((error: Error) => {
-  console.error('❌ Web server failed to start:', error.message);
-  process.exit(1);
-});
+main();
