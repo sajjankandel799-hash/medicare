@@ -1,0 +1,1447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Dashboard - MediCare</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #F8FAFC 0%, #E0E7FF 100%);
+            color: #0F172A;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(14, 165, 233, 0.05) 0%, transparent 70%);
+            animation: float 20s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            bottom: -50%;
+            left: -50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.05) 0%, transparent 70%);
+            animation: float 25s ease-in-out infinite reverse;
+            pointer-events: none;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(30px, -30px) rotate(120deg); }
+            66% { transform: translate(-20px, 20px) rotate(240deg); }
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(40px) saturate(180%);
+            border-bottom: 1px solid rgba(226, 232, 240, 0.5);
+            padding: 12px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 40px;
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            font-size: 26px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #0EA5E9 0%, #10B981 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: translateX(4px);
+        }
+
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #0EA5E9 0%, #06B6D4 50%, #10B981 100%);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            box-shadow: 0 8px 24px rgba(14, 165, 233, 0.4);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .logo-icon svg {
+            width: 26px;
+            height: 26px;
+            stroke-width: 2.5;
+        }
+
+        .logo-icon::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.3), transparent);
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+
+        .logo-icon:hover {
+            transform: scale(1.15) rotate(-5deg);
+            box-shadow: 0 12px 32px rgba(14, 165, 233, 0.5);
+        }
+
+        .nav-center {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+
+        .nav-link {
+            padding: 10px 24px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #64748B;
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%) scaleX(0);
+            width: 80%;
+            height: 2px;
+            background: linear-gradient(90deg, #0EA5E9, #10B981);
+            border-radius: 2px;
+            transition: transform 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: #0EA5E9;
+            background: rgba(14, 165, 233, 0.05);
+        }
+
+        .nav-link:hover::before {
+            transform: translateX(-50%) scaleX(1);
+        }
+
+        .nav-link.active {
+            color: #0EA5E9;
+            background: rgba(14, 165, 233, 0.1);
+        }
+
+        .nav-link.active::before {
+            transform: translateX(-50%) scaleX(1);
+        }
+
+        .nav-link-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s ease;
+        }
+
+        .nav-link-icon svg {
+            width: 20px;
+            height: 20px;
+            stroke-width: 2;
+        }
+
+        .nav-link:hover .nav-link-icon {
+            transform: translateY(-2px);
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 16px 8px 8px;
+            background: white;
+            border-radius: 50px;
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+
+        .user-info:hover {
+            border-color: rgba(14, 165, 233, 0.4);
+            box-shadow: 0 4px 16px rgba(14, 165, 233, 0.15);
+            transform: translateY(-1px);
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #0EA5E9 0%, #10B981 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 16px;
+            box-shadow: 0 2px 8px rgba(14, 165, 233, 0.3);
+            transition: transform 0.3s ease;
+        }
+
+        .user-info:hover .user-avatar {
+            transform: scale(1.05);
+        }
+
+        .user-details {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 2px;
+        }
+
+        .user-name {
+            font-weight: 600;
+            color: #0F172A;
+            font-size: 14px;
+            line-height: 1;
+        }
+
+        .user-role {
+            font-size: 11px;
+            color: #94A3B8;
+            font-weight: 500;
+            line-height: 1;
+        }
+
+        .action-buttons {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .icon-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: white;
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+
+        .icon-btn svg {
+            width: 20px;
+            height: 20px;
+            stroke-width: 2;
+        }
+
+        .icon-btn:hover {
+            background: #0EA5E9;
+            border-color: #0EA5E9;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+        }
+
+        .icon-btn.logout {
+            background: rgba(239, 68, 68, 0.05);
+            border-color: rgba(239, 68, 68, 0.2);
+            color: #DC2626;
+        }
+
+        .icon-btn.logout:hover {
+            background: #DC2626;
+            border-color: #DC2626;
+            color: white;
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            gap: 6px;
+        }
+        
+        .btn svg {
+            width: 16px;
+            height: 16px;
+            stroke-width: 2;
+        }
+
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn:active::after {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn-ghost {
+            background: rgba(255, 255, 255, 0.8);
+            color: #475569;
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-ghost:hover {
+            background: white;
+            color: #0EA5E9;
+            border-color: rgba(14, 165, 233, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.15);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #0EA5E9 0%, #0284C7 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #0284C7 0%, #0EA5E9 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(14, 165, 233, 0.4);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-danger:hover {
+            background: linear-gradient(135deg, #DC2626 0%, #B91C1C 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(239, 68, 68, 0.4);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-success:hover {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 32px 24px;
+        }
+
+        .page-header {
+            margin-bottom: 32px;
+        }
+
+        .page-title {
+            font-size: 36px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #0F172A 0%, #0EA5E9 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .page-subtitle {
+            color: #64748B;
+            font-size: 16px;
+            animation: fadeIn 0.6s ease-out 0.1s backwards;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 28px;
+            border-radius: 20px;
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 0.6s ease-out backwards;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #0EA5E9, #06B6D4, #10B981);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(14, 165, 233, 0.15);
+            border-color: rgba(14, 165, 233, 0.3);
+        }
+
+        .stat-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .stat-card:nth-child(1) { animation-delay: 0.05s; }
+        .stat-card:nth-child(2) { animation-delay: 0.1s; }
+        .stat-card:nth-child(3) { animation-delay: 0.15s; }
+
+        .stat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .stat-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            transition: all 0.3s ease;
+        }
+        
+        .stat-icon svg {
+            width: 28px;
+            height: 28px;
+            stroke-width: 2;
+        }
+
+        .stat-card:hover .stat-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .stat-icon.blue {
+            background: linear-gradient(135deg, rgba(14, 165, 233, 0.1) 0%, rgba(6, 182, 212, 0.15) 100%);
+            color: #0EA5E9;
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.2);
+        }
+
+        .stat-icon.green {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.15) 100%);
+            color: #10B981;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+        }
+
+        .stat-icon.orange {
+            background: linear-gradient(135deg, rgba(249, 115, 22, 0.1) 0%, rgba(234, 88, 12, 0.15) 100%);
+            color: #F97316;
+            box-shadow: 0 4px 12px rgba(249, 115, 22, 0.2);
+        }
+
+        .stat-number {
+            font-size: 36px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #0EA5E9 0%, #10B981 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 4px;
+            animation: countUp 1s ease-out;
+        }
+
+        @keyframes countUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .stat-label {
+            color: #6b7280;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            transition: all 0.4s ease;
+            animation: fadeInUp 0.5s ease-out 0.2s backwards;
+        }
+
+        .card:hover {
+            box-shadow: 0 20px 40px rgba(14, 165, 233, 0.1);
+            transform: translateY(-4px);
+        }
+
+        .card-header {
+            padding: 28px 28px 20px;
+            border-bottom: 1px solid rgba(241, 245, 249, 0.8);
+            margin-bottom: 24px;
+            position: relative;
+        }
+
+        .card-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 28px;
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, #0EA5E9, #10B981);
+            border-radius: 3px;
+        }
+
+        .card-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #0F172A;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .card-title::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: linear-gradient(135deg, #0EA5E9, #10B981);
+            border-radius: 50%;
+            box-shadow: 0 0 12px rgba(14, 165, 233, 0.5);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.3); opacity: 0.7; }
+        }
+
+        .card-subtitle {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .card-content {
+            padding: 0 24px 24px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #374151;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid rgba(226, 232, 240, 0.8);
+            border-radius: 12px;
+            font-size: 15px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: white;
+            font-family: inherit;
+        }
+
+        .form-group input:hover,
+        .form-group select:hover,
+        .form-group textarea:hover {
+            border-color: rgba(14, 165, 233, 0.3);
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #0EA5E9;
+            box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .appointment-card {
+            background: linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 16px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .appointment-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, #0EA5E9, #10B981);
+            transform: scaleY(0);
+            transition: transform 0.4s ease;
+        }
+
+        .appointment-card:hover {
+            background: white;
+            box-shadow: 0 12px 24px rgba(14, 165, 233, 0.15);
+            transform: translateX(8px);
+            border-color: rgba(14, 165, 233, 0.3);
+        }
+
+        .appointment-card:hover::before {
+            transform: scaleY(1);
+        }
+
+        .appointment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+
+        .doctor-info h4 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 4px;
+        }
+
+        .doctor-info p {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .status-badge {
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            position: relative;
+            overflow: hidden;
+            animation: slideInRight 0.5s ease-out;
+        }
+
+        .status-badge::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .status-scheduled {
+            background: rgba(249, 115, 22, 0.1);
+            color: #ea580c;
+        }
+
+        .status-confirmed {
+            background: rgba(34, 197, 94, 0.1);
+            color: #16a34a;
+        }
+
+        .status-completed {
+            background: rgba(59, 130, 246, 0.1);
+            color: #2563eb;
+        }
+
+        .status-cancelled {
+            background: rgba(239, 68, 68, 0.1);
+            color: #dc2626;
+        }
+
+        .status-postpone_requested {
+            background: rgba(168, 85, 247, 0.1);
+            color: #7c3aed;
+        }
+
+        .status-postponed {
+            background: rgba(168, 85, 247, 0.1);
+            color: #7c3aed;
+        }
+
+        .postponement-request {
+            background: rgba(168, 85, 247, 0.1);
+            border: 1px solid rgba(168, 85, 247, 0.2);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .postponement-details {
+            margin-bottom: 12px;
+        }
+
+        .postponement-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .appointment-details {
+            color: #6b7280;
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 16px;
+        }
+
+        .appointment-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .status-message {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 16px;
+        }
+        
+        .status-message svg {
+            width: 16px;
+            height: 16px;
+            stroke-width: 2;
+        }
+
+        .status-message.pending {
+            background: rgba(249, 115, 22, 0.1);
+            color: #ea580c;
+        }
+
+        .status-message.confirmed {
+            background: rgba(34, 197, 94, 0.1);
+            color: #16a34a;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+            color: #64748B;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            opacity: 0.4;
+            animation: bounce 2s ease-in-out infinite;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #64748B;
+        }
+        
+        .empty-state-icon svg {
+            width: 64px;
+            height: 64px;
+            stroke-width: 1.5;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .empty-state h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 8px;
+        }
+
+        .alert {
+            padding: 18px 20px;
+            margin-bottom: 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            animation: slideInDown 0.5s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .alert::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+        }
+
+        .alert-success {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.05) 100%);
+            color: #047857;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .alert-success::before {
+            background: linear-gradient(180deg, #10B981, #059669);
+        }
+
+        .alert-error {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(220, 38, 38, 0.05) 100%);
+            color: #B91C1C;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .alert-error::before {
+            background: linear-gradient(180deg, #EF4444, #DC2626);
+        }
+
+        @keyframes slideInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .appointment-header {
+                flex-direction: column;
+                gap: 12px;
+                align-items: flex-start;
+            }
+
+            .appointment-actions {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <a href="/" class="logo">
+                <div class="logo-icon">
+                    <i data-lucide="heart-pulse"></i>
+                </div>
+                MediCare
+            </a>
+            <nav class="nav-center">
+                <a href="/" class="nav-link">
+                    <span class="nav-link-icon"><i data-lucide="home"></i></span>
+                    <span>Home</span>
+                </a>
+                <a href="/patient-dashboard.html" class="nav-link active">
+                    <span class="nav-link-icon"><i data-lucide="layout-dashboard"></i></span>
+                    <span>Dashboard</span>
+                </a>
+            </nav>
+            
+            <div class="user-menu">
+                <div class="action-buttons">
+                    <button class="icon-btn" title="Notifications">
+                        <i data-lucide="bell"></i>
+                    </button>
+                </div>
+                <div class="user-info">
+                    <div class="user-avatar" id="user-avatar">P</div>
+                    <div class="user-details">
+                        <div class="user-name" id="user-name">Loading...</div>
+                        <div class="user-role">Patient</div>
+                    </div>
+                </div>
+                <button class="icon-btn logout" onclick="logout()" title="Logout">
+                    <i data-lucide="log-out"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="page-header">
+            <h1 class="page-title">Dashboard</h1>
+            <p class="page-subtitle">Manage your appointments and health records</p>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon blue"><i data-lucide="calendar"></i></div>
+                </div>
+                <div class="stat-number" id="total-appointments">0</div>
+                <div class="stat-label">Total Appointments</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon orange"><i data-lucide="clock"></i></div>
+                </div>
+                <div class="stat-number" id="upcoming-appointments">0</div>
+                <div class="stat-label">Upcoming</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon green"><i data-lucide="check-circle"></i></div>
+                </div>
+                <div class="stat-number" id="completed-appointments">0</div>
+                <div class="stat-label">Completed</div>
+            </div>
+        </div>
+
+        <div class="dashboard-grid">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Book New Appointment</h2>
+                    <p class="card-subtitle">Schedule a consultation with our qualified doctors</p>
+                </div>
+                <div class="card-content">
+                    <div id="booking-alert"></div>
+                    
+                    <form onsubmit="bookAppointment(event)">
+                        <div class="form-group">
+                            <label for="doctor-select">Select Doctor</label>
+                            <select id="doctor-select" required>
+                                <option value="">Choose a doctor...</option>
+                            </select>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="appointment-date">Date</label>
+                                <input type="date" id="appointment-date" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="appointment-time">Time</label>
+                                <select id="appointment-time" required>
+                                    <option value="">Select time...</option>
+                                    <option value="09:00">9:00 AM</option>
+                                    <option value="10:00">10:00 AM</option>
+                                    <option value="11:00">11:00 AM</option>
+                                    <option value="14:00">2:00 PM</option>
+                                    <option value="15:00">3:00 PM</option>
+                                    <option value="16:00">4:00 PM</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="appointment-reason">Reason for Visit</label>
+                            <textarea id="appointment-reason" rows="3" placeholder="Describe your symptoms or reason for the appointment..."></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" style="width: 100%; padding: 12px;">
+                            Book Appointment
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">My Appointments</h2>
+                    <p class="card-subtitle">View and manage your scheduled appointments</p>
+                </div>
+                <div class="card-content">
+                    <div id="appointments-container">
+                        <div class="empty-state">
+                            <div class="empty-state-icon"><i data-lucide="calendar"></i></div>
+                            <h3>Loading appointments...</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentUser = null;
+        let doctors = [];
+        let appointments = [];
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAuth();
+            loadDoctors();
+            loadAppointments();
+            setMinDate();
+            
+            // Initialize Lucide icons
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        });
+
+        function checkAuth() {
+            const token = localStorage.getItem('authToken');
+            const user = localStorage.getItem('user');
+            
+            if (!token || !user) {
+                window.location.href = '/login.html';
+                return;
+            }
+
+            currentUser = JSON.parse(user);
+            
+            if (currentUser.userType !== 'patient') {
+                window.location.href = '/login.html';
+                return;
+            }
+
+            document.getElementById('user-name').textContent = currentUser.name;
+            
+            // Set user avatar initial
+            const initial = currentUser.name.charAt(0).toUpperCase();
+            document.getElementById('user-avatar').textContent = initial;
+        }
+
+        function setMinDate() {
+            const today = new Date();
+            const tomorrow = new Date(today);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            
+            const dateInput = document.getElementById('appointment-date');
+            dateInput.min = tomorrow.toISOString().split('T')[0];
+        }
+
+        async function apiCall(endpoint, method = 'GET', data = null) {
+            const token = localStorage.getItem('authToken');
+            
+            const options = {
+                method,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            };
+            
+            if (data) {
+                options.body = JSON.stringify(data);
+            }
+            
+            const response = await fetch(`/api${endpoint}`, options);
+            const result = await response.json();
+            
+            if (!result.success) {
+                throw new Error(result.error?.message || 'An error occurred');
+            }
+            
+            return result.data;
+        }
+
+        async function loadDoctors() {
+            try {
+                doctors = await apiCall('/doctors');
+                populateDoctorSelect();
+            } catch (error) {
+                console.error('Error loading doctors:', error);
+            }
+        }
+
+        function populateDoctorSelect() {
+            const select = document.getElementById('doctor-select');
+            select.innerHTML = '<option value="">Choose a doctor...</option>';
+            
+            doctors.forEach(doctor => {
+                const option = document.createElement('option');
+                option.value = doctor.id;
+                option.textContent = `Dr. ${doctor.name} - ${doctor.specialization}`;
+                select.appendChild(option);
+            });
+        }
+
+        async function loadAppointments() {
+            try {
+                const allAppointments = await apiCall('/appointments');
+                appointments = allAppointments.filter(apt => apt.patientId === currentUser.id);
+                displayAppointments();
+                updateStats();
+            } catch (error) {
+                console.error('Error loading appointments:', error);
+                document.getElementById('appointments-container').innerHTML = 
+                    '<div class="alert alert-error">Error loading appointments</div>';
+            }
+        }
+
+        function displayAppointments() {
+            const container = document.getElementById('appointments-container');
+            
+            if (appointments.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon"><i data-lucide="calendar"></i></div>
+                        <h3>No appointments yet</h3>
+                        <p>Book your first appointment using the form on the left.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Sort appointments by date (newest first)
+            const sortedAppointments = appointments.sort((a, b) => new Date(b.dateTime) - new Date(a.dateTime));
+            
+            container.innerHTML = sortedAppointments.map(appointment => {
+                const doctor = doctors.find(d => d.id === appointment.doctorId);
+                const dateTime = new Date(appointment.dateTime);
+                
+                let statusMessage = '';
+                if (appointment.status === 'scheduled') {
+                    statusMessage = `
+                        <div class="status-message pending">
+                            <i data-lucide="clock"></i> Waiting for doctor confirmation
+                        </div>
+                    `;
+                } else if (appointment.status === 'confirmed') {
+                    statusMessage = `
+                        <div class="status-message confirmed">
+                            <i data-lucide="check-circle"></i> Confirmed by doctor
+                        </div>
+                    `;
+                } else if (appointment.status === 'postpone_requested' && appointment.postponement) {
+                    const newDateTime = new Date(appointment.postponement.newDateTime);
+                    statusMessage = `
+                        <div class="postponement-request">
+                            <div class="postponement-details">
+                                <strong><i data-lucide="calendar"></i> Doctor has requested to postpone this appointment</strong><br>
+                                <strong>New Date & Time:</strong> ${newDateTime.toLocaleDateString()} at ${newDateTime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}<br>
+                                <strong>Reason:</strong> ${appointment.postponement.reason}
+                            </div>
+                            <div class="postponement-actions">
+                                <button class="btn btn-success" onclick="acceptPostponement('${appointment.id}')">
+                                    <i data-lucide="check"></i> Accept New Time
+                                </button>
+                                <button class="btn btn-danger" onclick="rejectPostponement('${appointment.id}')">
+                                    <i data-lucide="x"></i> Keep Original Time
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                return `
+                    <div class="appointment-card">
+                        <div class="appointment-header">
+                            <div class="doctor-info">
+                                <h4>Dr. ${doctor ? doctor.name : 'Unknown Doctor'}</h4>
+                                <p>${doctor ? doctor.specialization : 'N/A'}</p>
+                            </div>
+                            <div class="status-badge status-${appointment.status}">
+                                ${appointment.status}
+                            </div>
+                        </div>
+                        
+                        ${statusMessage}
+                        
+                        <div class="appointment-details">
+                            <div><strong>Date & Time:</strong> ${dateTime.toLocaleDateString()} at ${dateTime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
+                            ${appointment.notes ? `<div><strong>Reason:</strong> ${appointment.notes}</div>` : ''}
+                        </div>
+                        
+                        ${(appointment.status === 'scheduled' || appointment.status === 'confirmed') ? `
+                            <div class="appointment-actions">
+                                <button class="btn btn-danger" onclick="cancelAppointment('${appointment.id}')">
+                                    Cancel Appointment
+                                </button>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function updateStats() {
+            document.getElementById('total-appointments').textContent = appointments.length;
+            
+            const now = new Date();
+            const upcoming = appointments.filter(apt => 
+                (apt.status === 'scheduled' || apt.status === 'confirmed') && new Date(apt.dateTime) > now
+            ).length;
+            
+            const completed = appointments.filter(apt => apt.status === 'completed').length;
+            
+            document.getElementById('upcoming-appointments').textContent = upcoming;
+            document.getElementById('completed-appointments').textContent = completed;
+        }
+
+        async function bookAppointment(event) {
+            event.preventDefault();
+            
+            const doctorId = document.getElementById('doctor-select').value;
+            const date = document.getElementById('appointment-date').value;
+            const time = document.getElementById('appointment-time').value;
+            const reason = document.getElementById('appointment-reason').value;
+            
+            const dateTime = new Date(`${date}T${time}`).toISOString();
+            
+            const appointmentData = {
+                patientId: currentUser.id,
+                doctorId: doctorId,
+                dateTime: dateTime,
+                status: 'scheduled',
+                notes: reason
+            };
+            
+            try {
+                await apiCall('/appointments', 'POST', appointmentData);
+                showAlert('booking-alert', 'Appointment booked successfully! Waiting for doctor confirmation.', 'success');
+                
+                // Reset form
+                document.querySelector('form').reset();
+                
+                // Reload appointments
+                loadAppointments();
+            } catch (error) {
+                showAlert('booking-alert', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function cancelAppointment(appointmentId) {
+            if (!confirm('Are you sure you want to cancel this appointment?')) {
+                return;
+            }
+            
+            try {
+                await apiCall(`/appointments/${appointmentId}/cancel`, 'PUT');
+                showAlert('booking-alert', 'Appointment cancelled successfully', 'success');
+                loadAppointments();
+            } catch (error) {
+                showAlert('booking-alert', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        function showAlert(containerId, message, type = 'success') {
+            const container = document.getElementById(containerId);
+            container.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
+            setTimeout(() => {
+                container.innerHTML = '';
+            }, 5000);
+        }
+
+        async function acceptPostponement(appointmentId) {
+            if (!confirm('Are you sure you want to accept the new appointment time?')) {
+                return;
+            }
+            
+            try {
+                await apiCall(`/appointments/${appointmentId}/accept-postponement`, 'PUT');
+                showAlert('booking-alert', 'Appointment time updated successfully!', 'success');
+                loadAppointments();
+            } catch (error) {
+                showAlert('booking-alert', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function rejectPostponement(appointmentId) {
+            if (!confirm('Are you sure you want to keep the original appointment time?')) {
+                return;
+            }
+            
+            try {
+                await apiCall(`/appointments/${appointmentId}/reject-postponement`, 'PUT');
+                showAlert('booking-alert', 'Appointment kept at original time', 'success');
+                loadAppointments();
+            } catch (error) {
+                showAlert('booking-alert', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('user');
+            window.location.href = '/login.html';
+        }
+    </script>
+</body>
+</html>

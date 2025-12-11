@@ -1,0 +1,1455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doctor Dashboard - MediCare</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #F8FAFC 0%, #E0E7FF 100%);
+            color: #0F172A;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(14, 165, 233, 0.05) 0%, transparent 70%);
+            animation: float 20s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            bottom: -50%;
+            left: -50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.05) 0%, transparent 70%);
+            animation: float 25s ease-in-out infinite reverse;
+            pointer-events: none;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(30px, -30px) rotate(120deg); }
+            66% { transform: translate(-20px, 20px) rotate(240deg); }
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(40px) saturate(180%);
+            border-bottom: 1px solid rgba(226, 232, 240, 0.5);
+            padding: 12px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 40px;
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            font-size: 26px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #0EA5E9 0%, #10B981 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: translateX(4px);
+        }
+
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #0EA5E9 0%, #06B6D4 50%, #10B981 100%);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            box-shadow: 0 8px 24px rgba(14, 165, 233, 0.4);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .logo-icon::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.3), transparent);
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+
+        .logo-icon:hover {
+            transform: scale(1.15) rotate(-5deg);
+            box-shadow: 0 12px 32px rgba(14, 165, 233, 0.5);
+        }
+        
+        .logo-icon svg {
+            width: 26px;
+            height: 26px;
+            stroke-width: 2.5;
+        }
+
+        .nav-center {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+
+        .nav-link {
+            padding: 10px 24px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #64748B;
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%) scaleX(0);
+            width: 80%;
+            height: 2px;
+            background: linear-gradient(90deg, #0EA5E9, #10B981);
+            border-radius: 2px;
+            transition: transform 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: #0EA5E9;
+            background: rgba(14, 165, 233, 0.05);
+        }
+
+        .nav-link:hover::before {
+            transform: translateX(-50%) scaleX(1);
+        }
+
+        .nav-link.active {
+            color: #0EA5E9;
+            background: rgba(14, 165, 233, 0.1);
+        }
+
+        .nav-link.active::before {
+            transform: translateX(-50%) scaleX(1);
+        }
+
+        .nav-link-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s ease;
+        }
+
+        .nav-link-icon svg {
+            width: 20px;
+            height: 20px;
+            stroke-width: 2;
+        }
+
+        .nav-link:hover .nav-link-icon {
+            transform: translateY(-2px);
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 16px 8px 8px;
+            background: white;
+            border-radius: 50px;
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+
+        .user-info:hover {
+            border-color: rgba(14, 165, 233, 0.4);
+            box-shadow: 0 4px 16px rgba(14, 165, 233, 0.15);
+            transform: translateY(-1px);
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #0EA5E9 0%, #10B981 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 16px;
+            box-shadow: 0 2px 8px rgba(14, 165, 233, 0.3);
+            transition: transform 0.3s ease;
+        }
+
+        .user-info:hover .user-avatar {
+            transform: scale(1.05);
+        }
+
+        .user-details {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 2px;
+        }
+
+        .user-name {
+            font-weight: 600;
+            color: #0F172A;
+            font-size: 14px;
+            line-height: 1;
+        }
+
+        .user-role {
+            font-size: 11px;
+            color: #94A3B8;
+            font-weight: 500;
+            line-height: 1;
+        }
+
+        .action-buttons {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .icon-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: white;
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+
+        .icon-btn svg {
+            width: 20px;
+            height: 20px;
+            stroke-width: 2;
+        }
+
+        .icon-btn:hover {
+            background: #0EA5E9;
+            border-color: #0EA5E9;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+        }
+
+        .icon-btn.logout {
+            background: rgba(239, 68, 68, 0.05);
+            border-color: rgba(239, 68, 68, 0.2);
+            color: #DC2626;
+        }
+
+        .icon-btn.logout:hover {
+            background: #DC2626;
+            border-color: #DC2626;
+            color: white;
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+        }
+
+        .user-info {
+            text-align: right;
+        }
+
+        .user-name {
+            font-weight: 600;
+            color: #1a1a1a;
+            font-size: 16px;
+        }
+
+        .user-role {
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        
+        .btn svg {
+            width: 16px;
+            height: 16px;
+            stroke-width: 2;
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: #6b7280;
+            border: 1px solid #e5e7eb;
+        }
+
+        .btn-ghost:hover {
+            background: #f9fafb;
+            color: #1a1a1a;
+        }
+
+        .btn-primary {
+            background: #4ECDC4;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #45b8b0;
+        }
+
+        .btn-success {
+            background: #22c55e;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #16a34a;
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 32px 24px;
+        }
+
+        .page-header {
+            margin-bottom: 32px;
+        }
+
+        .page-header {
+            margin-bottom: 32px;
+        }
+
+        .page-title {
+            font-size: 36px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #0F172A 0%, #0EA5E9 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .page-subtitle {
+            color: #64748B;
+            font-size: 16px;
+            animation: fadeIn 0.6s ease-out 0.1s backwards;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 28px;
+            border-radius: 20px;
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 0.6s ease-out backwards;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #0EA5E9, #06B6D4, #10B981);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(14, 165, 233, 0.15);
+            border-color: rgba(14, 165, 233, 0.3);
+        }
+
+        .stat-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .stat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+        
+        .stat-icon svg {
+            width: 24px;
+            height: 24px;
+            stroke-width: 2;
+        }
+
+        .stat-icon.blue {
+            background: rgba(59, 130, 246, 0.1);
+            color: #3b82f6;
+        }
+
+        .stat-icon.green {
+            background: rgba(34, 197, 94, 0.1);
+            color: #22c55e;
+        }
+
+        .stat-icon.orange {
+            background: rgba(249, 115, 22, 0.1);
+            color: #f97316;
+        }
+
+        .stat-icon.purple {
+            background: rgba(147, 51, 234, 0.1);
+            color: #9333ea;
+        }
+
+        .stat-number {
+            font-size: 32px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            color: #6b7280;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .tabs {
+            display: flex;
+            background: white;
+            border-radius: 12px;
+            padding: 4px;
+            margin-bottom: 32px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 12px 16px;
+            background: transparent;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #6b7280;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .tab svg {
+            width: 18px;
+            height: 18px;
+            stroke-width: 2;
+        }
+
+        .tab.active {
+            background: #4ECDC4;
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            transition: all 0.4s ease;
+            animation: fadeInUp 0.5s ease-out 0.2s backwards;
+            margin-bottom: 24px;
+        }
+
+        .card:hover {
+            box-shadow: 0 20px 40px rgba(14, 165, 233, 0.1);
+            transform: translateY(-4px);
+        }
+
+        .card-header {
+            padding: 28px 28px 20px;
+            border-bottom: 1px solid rgba(241, 245, 249, 0.8);
+            margin-bottom: 24px;
+            position: relative;
+        }
+
+        .card-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 28px;
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, #0EA5E9, #10B981);
+            border-radius: 3px;
+        }
+
+        .card-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #0F172A;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .card-title::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: linear-gradient(135deg, #0EA5E9, #10B981);
+            border-radius: 50%;
+            box-shadow: 0 0 12px rgba(14, 165, 233, 0.5);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.3); opacity: 0.7; }
+        }
+
+        .card-subtitle {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .card-content {
+            padding: 0 24px 24px;
+        }
+
+        .appointment-card {
+            background: linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 16px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .appointment-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, #0EA5E9, #10B981);
+            transform: scaleY(0);
+            transition: transform 0.4s ease;
+        }
+
+        .appointment-card:hover {
+            background: white;
+            box-shadow: 0 12px 24px rgba(14, 165, 233, 0.15);
+            transform: translateX(8px);
+            border-color: rgba(14, 165, 233, 0.3);
+        }
+
+        .appointment-card:hover::before {
+            transform: scaleY(1);
+        }
+
+        .appointment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+
+        .patient-info h4 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 4px;
+        }
+
+        .patient-info p {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-scheduled {
+            background: rgba(249, 115, 22, 0.1);
+            color: #ea580c;
+        }
+
+        .status-confirmed {
+            background: rgba(34, 197, 94, 0.1);
+            color: #16a34a;
+        }
+
+        .status-completed {
+            background: rgba(59, 130, 246, 0.1);
+            color: #2563eb;
+        }
+
+        .status-cancelled {
+            background: rgba(239, 68, 68, 0.1);
+            color: #dc2626;
+        }
+
+        .status-postpone_requested {
+            background: rgba(168, 85, 247, 0.1);
+            color: #7c3aed;
+        }
+
+        .status-postponed {
+            background: rgba(168, 85, 247, 0.1);
+            color: #7c3aed;
+        }
+
+        .appointment-details {
+            color: #6b7280;
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 16px;
+        }
+
+        .appointment-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #374151;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.2s ease;
+            background: white;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #4ECDC4;
+            box-shadow: 0 0 0 3px rgba(78, 205, 196, 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6b7280;
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6b7280;
+        }
+        
+        .empty-state-icon svg {
+            width: 48px;
+            height: 48px;
+            stroke-width: 1.5;
+        }
+
+        .empty-state h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 8px;
+        }
+
+        .alert {
+            padding: 16px;
+            margin-bottom: 24px;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .alert-success {
+            background: rgba(34, 197, 94, 0.1);
+            color: #15803d;
+            border: 1px solid rgba(34, 197, 94, 0.2);
+        }
+
+        .alert-error {
+            background: rgba(239, 68, 68, 0.1);
+            color: #dc2626;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .appointment-header {
+                flex-direction: column;
+                gap: 12px;
+                align-items: flex-start;
+            }
+
+            .appointment-actions {
+                flex-wrap: wrap;
+            }
+
+            .tabs {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <a href="/" class="logo">
+                <div class="logo-icon">
+                    <i data-lucide="heart-pulse"></i>
+                </div>
+                MediCare
+            </a>
+            <nav class="nav-center">
+                <a href="/" class="nav-link">
+                    <span class="nav-link-icon"><i data-lucide="home"></i></span>
+                    <span>Home</span>
+                </a>
+                <a href="/doctor-dashboard.html" class="nav-link active">
+                    <span class="nav-link-icon"><i data-lucide="layout-dashboard"></i></span>
+                    <span>Dashboard</span>
+                </a>
+            </nav>
+            
+            <div class="user-menu">
+                <div class="action-buttons">
+                    <button class="icon-btn" title="Notifications">
+                        <i data-lucide="bell"></i>
+                    </button>
+                </div>
+                <div class="user-info">
+                    <div class="user-avatar" id="user-avatar">D</div>
+                    <div class="user-details">
+                        <div class="user-name" id="user-name">Loading...</div>
+                        <div class="user-role">Doctor</div>
+                    </div>
+                </div>
+                <button class="icon-btn logout" onclick="logout()" title="Logout">
+                    <i data-lucide="log-out"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="page-header">
+            <h1 class="page-title">Doctor Dashboard</h1>
+            <p class="page-subtitle">Manage your appointments and patient records</p>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon blue"><i data-lucide="calendar"></i></div>
+                </div>
+                <div class="stat-number" id="total-appointments">0</div>
+                <div class="stat-label">Total Appointments</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon orange"><i data-lucide="clipboard"></i></div>
+                </div>
+                <div class="stat-number" id="today-appointments">0</div>
+                <div class="stat-label">Today's Appointments</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon green"><i data-lucide="check-circle"></i></div>
+                </div>
+                <div class="stat-number" id="completed-appointments">0</div>
+                <div class="stat-label">Completed</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-header">
+                    <div class="stat-icon purple"><i data-lucide="users"></i></div>
+                </div>
+                <div class="stat-number" id="total-patients">0</div>
+                <div class="stat-label">Total Patients</div>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('appointments')">
+                <i data-lucide="calendar"></i> My Appointments
+            </button>
+            <button class="tab" onclick="showTab('records')">
+                <i data-lucide="clipboard"></i> Medical Records
+            </button>
+        </div>
+
+        <div id="appointments-tab" class="tab-content active">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Appointment Requests</h2>
+                    <p class="card-subtitle">Review and manage patient appointment requests</p>
+                </div>
+                <div class="card-content">
+                    <div id="appointments-alert"></div>
+                    <div id="appointments-container">
+                        <div class="empty-state">
+                            <div class="empty-state-icon"><i data-lucide="calendar"></i></div>
+                            <h3>Loading appointments...</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="records-tab" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Create Medical Record</h2>
+                    <p class="card-subtitle">Document patient consultations and treatments</p>
+                </div>
+                <div class="card-content">
+                    <div id="records-alert"></div>
+                    
+                    <form onsubmit="createMedicalRecord(event)">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="record-patient">Patient</label>
+                                <select id="record-patient" required>
+                                    <option value="">Select Patient</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="record-diagnosis">Diagnosis</label>
+                                <input type="text" id="record-diagnosis" placeholder="Enter diagnosis" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="record-treatment">Treatment</label>
+                            <textarea id="record-treatment" rows="3" placeholder="Describe the treatment plan..." required></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="record-notes">Notes</label>
+                            <textarea id="record-notes" rows="3" placeholder="Additional notes and observations..." required></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" style="width: 100%; padding: 12px;">
+                            Create Medical Record
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Recent Medical Records</h2>
+                    <p class="card-subtitle">View your recently created medical records</p>
+                </div>
+                <div class="card-content">
+                    <div id="records-container">
+                        <div class="empty-state">
+                            <div class="empty-state-icon"><i data-lucide="clipboard"></i></div>
+                            <h3>Loading medical records...</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Postponement Modal -->
+    <div id="postponeModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;">
+        <div style="background: white; padding: 2rem; border-radius: 1rem; max-width: 500px; width: 90%;">
+            <h3 style="margin-bottom: 1.5rem; color: #1a1a1a;">Postpone Appointment</h3>
+            <form onsubmit="postponeAppointment(event)">
+                <div class="form-group">
+                    <label for="postpone-date">New Date</label>
+                    <input type="date" id="postpone-date" required>
+                </div>
+                <div class="form-group">
+                    <label for="postpone-time">New Time</label>
+                    <select id="postpone-time" required>
+                        <option value="">Select time...</option>
+                        <option value="09:00">9:00 AM</option>
+                        <option value="10:00">10:00 AM</option>
+                        <option value="11:00">11:00 AM</option>
+                        <option value="14:00">2:00 PM</option>
+                        <option value="15:00">3:00 PM</option>
+                        <option value="16:00">4:00 PM</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="postpone-reason">Reason for Postponement</label>
+                    <textarea id="postpone-reason" rows="3" placeholder="Please explain why you need to postpone this appointment..." required></textarea>
+                </div>
+                <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                    <button type="submit" class="btn btn-primary" style="flex: 1;">Send Postponement Request</button>
+                    <button type="button" class="btn btn-ghost" onclick="hidePostponeModal()" style="flex: 1;">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        let currentUser = null;
+        let appointments = [];
+        let patients = [];
+        let medicalRecords = [];
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAuth();
+            loadAppointments();
+            loadPatients();
+            loadMedicalRecords();
+            
+            // Initialize Lucide icons
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        });
+
+        function checkAuth() {
+            const token = localStorage.getItem('authToken');
+            const user = localStorage.getItem('user');
+            
+            if (!token || !user) {
+                window.location.href = '/login.html';
+                return;
+            }
+
+            currentUser = JSON.parse(user);
+            
+            if (currentUser.userType !== 'doctor') {
+                window.location.href = '/login.html';
+                return;
+            }
+
+            document.getElementById('user-name').textContent = `Dr. ${currentUser.name}`;
+            
+            // Set user avatar initial
+            const initial = currentUser.name.charAt(0).toUpperCase();
+            document.getElementById('user-avatar').textContent = initial;
+        }
+
+        async function apiCall(endpoint, method = 'GET', data = null) {
+            const token = localStorage.getItem('authToken');
+            
+            const options = {
+                method,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            };
+            
+            if (data) {
+                options.body = JSON.stringify(data);
+            }
+            
+            const response = await fetch(`/api${endpoint}`, options);
+            const result = await response.json();
+            
+            if (!result.success) {
+                throw new Error(result.error?.message || 'An error occurred');
+            }
+            
+            return result.data;
+        }
+
+        async function loadAppointments() {
+            try {
+                const allAppointments = await apiCall('/appointments');
+                appointments = allAppointments.filter(apt => apt.doctorId === currentUser.id);
+                displayAppointments();
+                updateStats();
+                // Populate patient select after appointments are loaded
+                if (patients.length > 0) {
+                    populatePatientSelect();
+                }
+            } catch (error) {
+                console.error('Error loading appointments:', error);
+                document.getElementById('appointments-container').innerHTML = 
+                    '<div class="alert alert-error">Error loading appointments</div>';
+            }
+        }
+
+        async function loadPatients() {
+            try {
+                patients = await apiCall('/patients');
+                // Populate patient select after both patients and appointments are loaded
+                if (appointments.length > 0) {
+                    populatePatientSelect();
+                }
+            } catch (error) {
+                console.error('Error loading patients:', error);
+            }
+        }
+
+        async function loadMedicalRecords() {
+            try {
+                const allRecords = await apiCall('/medical-records');
+                medicalRecords = allRecords.filter(record => record.doctorId === currentUser.id);
+                displayMedicalRecords();
+            } catch (error) {
+                console.error('Error loading medical records:', error);
+            }
+        }
+
+        function populatePatientSelect() {
+            const select = document.getElementById('record-patient');
+            select.innerHTML = '<option value="">Select Patient</option>';
+            
+            // Show all patients (not just those with appointments)
+            patients.forEach(patient => {
+                const option = document.createElement('option');
+                option.value = patient.id;
+                option.textContent = patient.name;
+                select.appendChild(option);
+            });
+        }
+
+        function displayAppointments() {
+            const container = document.getElementById('appointments-container');
+            
+            if (appointments.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon"><i data-lucide="calendar"></i></div>
+                        <h3>No appointments scheduled</h3>
+                        <p>Patients will book appointments with you through the system.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Sort appointments by date (newest first)
+            const sortedAppointments = appointments.sort((a, b) => new Date(b.dateTime) - new Date(a.dateTime));
+            
+            container.innerHTML = sortedAppointments.map(appointment => {
+                const patient = patients.find(p => p.id === appointment.patientId);
+                const dateTime = new Date(appointment.dateTime);
+                const isToday = dateTime.toDateString() === new Date().toDateString();
+                
+                return `
+                    <div class="appointment-card">
+                        <div class="appointment-header">
+                            <div class="patient-info">
+                                <h4>${patient ? patient.name : 'Unknown Patient'}</h4>
+                                <p>Patient ID: ${appointment.patientId}</p>
+                            </div>
+                            <div class="status-badge status-${appointment.status}">
+                                ${appointment.status}
+                            </div>
+                        </div>
+                        
+                        <div class="appointment-details">
+                            <div><strong>Date & Time:</strong> ${dateTime.toLocaleDateString()} at ${dateTime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} ${isToday ? '(Today)' : ''}</div>
+                            <div><strong>Contact:</strong> ${patient ? patient.contactNumber : 'N/A'}</div>
+                            ${appointment.notes ? `<div><strong>Reason:</strong> ${appointment.notes}</div>` : ''}
+                        </div>
+                        
+                        ${appointment.status === 'scheduled' ? `
+                            <div class="appointment-actions">
+                                <button class="btn btn-success" onclick="confirmAppointment('${appointment.id}')">
+                                    <i data-lucide="check"></i> Confirm Appointment
+                                </button>
+                                <button class="btn btn-primary" onclick="showPostponeModal('${appointment.id}')">
+                                    <i data-lucide="calendar"></i> Postpone
+                                </button>
+                                <button class="btn btn-danger" onclick="cancelAppointment('${appointment.id}')">
+                                    ✗ Decline
+                                </button>
+                            </div>
+                        ` : appointment.status === 'confirmed' ? `
+                            <div class="appointment-actions">
+                                <button class="btn btn-success" onclick="completeAppointment('${appointment.id}')">
+                                    <i data-lucide="check"></i> Mark Complete
+                                </button>
+                                <button class="btn btn-primary" onclick="showPostponeModal('${appointment.id}')">
+                                    <i data-lucide="calendar"></i> Postpone
+                                </button>
+                                <button class="btn btn-danger" onclick="cancelAppointment('${appointment.id}')">
+                                    Cancel
+                                </button>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function displayMedicalRecords() {
+            const container = document.getElementById('records-container');
+            
+            if (medicalRecords.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon"><i data-lucide="clipboard"></i></div>
+                        <h3>No medical records yet</h3>
+                        <p>Create medical records for your patients using the form above.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const sortedRecords = medicalRecords.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            
+            container.innerHTML = sortedRecords.slice(0, 10).map(record => {
+                const patient = patients.find(p => p.id === record.patientId);
+                
+                return `
+                    <div class="appointment-card">
+                        <div class="appointment-header">
+                            <div class="patient-info">
+                                <h4>${patient ? patient.name : 'Unknown Patient'}</h4>
+                                <p>${new Date(record.createdAt).toLocaleDateString()}</p>
+                            </div>
+                        </div>
+                        <div class="appointment-details">
+                            <div><strong>Diagnosis:</strong> ${record.diagnosis}</div>
+                            <div><strong>Treatment:</strong> ${record.treatment}</div>
+                            <div><strong>Notes:</strong> ${record.notes}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function updateStats() {
+            document.getElementById('total-appointments').textContent = appointments.length;
+            
+            const today = new Date().toDateString();
+            const todayAppointments = appointments.filter(apt => 
+                new Date(apt.dateTime).toDateString() === today
+            ).length;
+            
+            const completed = appointments.filter(apt => apt.status === 'completed').length;
+            
+            // Count unique patients
+            const uniquePatients = new Set(appointments.map(apt => apt.patientId)).size;
+            
+            document.getElementById('today-appointments').textContent = todayAppointments;
+            document.getElementById('completed-appointments').textContent = completed;
+            document.getElementById('total-patients').textContent = uniquePatients;
+        }
+
+        async function confirmAppointment(appointmentId) {
+            try {
+                await apiCall(`/appointments/${appointmentId}/confirm`, 'PUT');
+                showAlert('appointments-alert', 'Appointment confirmed successfully', 'success');
+                loadAppointments();
+            } catch (error) {
+                showAlert('appointments-alert', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function completeAppointment(appointmentId) {
+            try {
+                await apiCall(`/appointments/${appointmentId}/complete`, 'PUT');
+                showAlert('appointments-alert', 'Appointment marked as completed', 'success');
+                loadAppointments();
+            } catch (error) {
+                showAlert('appointments-alert', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function cancelAppointment(appointmentId) {
+            if (!confirm('Are you sure you want to cancel this appointment?')) {
+                return;
+            }
+            
+            try {
+                await apiCall(`/appointments/${appointmentId}/cancel`, 'PUT');
+                showAlert('appointments-alert', 'Appointment cancelled', 'success');
+                loadAppointments();
+            } catch (error) {
+                showAlert('appointments-alert', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function createMedicalRecord(event) {
+            event.preventDefault();
+            
+            const recordData = {
+                patientId: document.getElementById('record-patient').value,
+                doctorId: currentUser.id,
+                diagnosis: document.getElementById('record-diagnosis').value,
+                treatment: document.getElementById('record-treatment').value,
+                notes: document.getElementById('record-notes').value
+            };
+            
+            try {
+                await apiCall('/medical-records', 'POST', recordData);
+                showAlert('records-alert', 'Medical record created successfully!', 'success');
+                
+                // Reset form
+                document.querySelector('#records-tab form').reset();
+                
+                // Reload records
+                loadMedicalRecords();
+            } catch (error) {
+                showAlert('records-alert', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        function showTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab content
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+            
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+        }
+
+        function showAlert(containerId, message, type = 'success') {
+            const container = document.getElementById(containerId);
+            container.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
+            setTimeout(() => {
+                container.innerHTML = '';
+            }, 5000);
+        }
+
+        let currentPostponeAppointmentId = null;
+
+        function showPostponeModal(appointmentId) {
+            currentPostponeAppointmentId = appointmentId;
+            const modal = document.getElementById('postponeModal');
+            modal.style.display = 'flex';
+            
+            // Set minimum date to tomorrow
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            document.getElementById('postpone-date').min = tomorrow.toISOString().split('T')[0];
+        }
+
+        function hidePostponeModal() {
+            document.getElementById('postponeModal').style.display = 'none';
+            currentPostponeAppointmentId = null;
+            document.getElementById('postpone-date').value = '';
+            document.getElementById('postpone-time').value = '';
+            document.getElementById('postpone-reason').value = '';
+        }
+
+        async function postponeAppointment(event) {
+            event.preventDefault();
+            
+            if (!currentPostponeAppointmentId) return;
+            
+            const date = document.getElementById('postpone-date').value;
+            const time = document.getElementById('postpone-time').value;
+            const reason = document.getElementById('postpone-reason').value;
+            
+            const newDateTime = new Date(`${date}T${time}`).toISOString();
+            
+            try {
+                await apiCall(`/appointments/${currentPostponeAppointmentId}/postpone`, 'PUT', {
+                    newDateTime,
+                    reason
+                });
+                
+                showAlert('appointments-alert', 'Postponement request sent to patient', 'success');
+                hidePostponeModal();
+                loadAppointments();
+            } catch (error) {
+                showAlert('appointments-alert', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('user');
+            window.location.href = '/login.html';
+        }
+    </script>
+</body>
+</html>

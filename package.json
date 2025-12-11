@@ -1,0 +1,39 @@
+{
+  "name": "hospital-management-system",
+  "version": "1.0.0",
+  "description": "A file-based hospital management system",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest --run",
+    "test:watch": "vitest",
+    "cli": "npm run build && node dist/cli.js",
+    "web": "npm run build && node dist/web.js",
+    "start": "npm run web"
+  },
+  "keywords": [
+    "hospital",
+    "management",
+    "healthcare"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.5",
+    "@types/express-session": "^1.18.2",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/node": "^20.0.0",
+    "fast-check": "^3.15.0",
+    "typescript": "^5.0.0",
+    "vitest": "^1.0.0"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "express-session": "^1.18.2",
+    "jsonwebtoken": "^9.0.2"
+  }
+}

@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - MediCare</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: linear-gradient(135deg, #F8FAFC 0%, #E0E7FF 100%); 
+            color: #0F172A; 
+            min-height: 100vh; 
+            position: relative; 
+            overflow-x: hidden; 
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(14, 165, 233, 0.05) 0%, transparent 70%);
+            animation: float 20s ease-in-out infinite;
+            pointer-events: none;
+        }
+        body::after {
+            content: '';
+            position: fixed;
+            bottom: -50%;
+            left: -50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.05) 0%, transparent 70%);
+            animation: float 25s ease-in-out infinite reverse;
+            pointer-events: none;
+        }
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(30px, -30px) rotate(120deg); }
+            66% { transform: translate(-20px, 20px) rotate(240deg); }
+        }
+        .header { 
+            background: rgba(255, 255, 255, 0.7); 
+            backdrop-filter: blur(40px) saturate(180%); 
+            border-bottom: 1px solid rgba(226, 232, 240, 0.5); 
+            padding: 12px 0; 
+            position: sticky; 
+            top: 0; 
+            z-index: 100; 
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05); 
+            animation: slideDown 0.3s ease-out; 
+        }
+        @keyframes slideDown {
+            from { transform: translateY(-100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .header-content { 
+            max-width: 1400px; 
+            margin: 0 auto; 
+            padding: 0 40px; 
+            display: grid; 
+            grid-template-columns: auto 1fr auto; 
+            gap: 40px; 
+            align-items: center; 
+        }
+        .logo { 
+            display: flex; 
+            align-items: center; 
+            gap: 14px; 
+            font-size: 26px; 
+            font-weight: 800; 
+            background: linear-gradient(135deg, #0EA5E9 0%, #10B981 100%); 
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent; 
+            background-clip: text; 
+            text-decoration: none; 
+            transition: all 0.3s ease; 
+        }
+        .logo:hover { transform: translateX(4px); }
+        .logo-icon { 
+            width: 48px; 
+            height: 48px; 
+            background: linear-gradient(135deg, #0EA5E9 0%, #06B6D4 50%, #10B981 100%); 
+            border-radius: 16px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            color: white; 
+            box-shadow: 0 8px 24px rgba(14, 165, 233, 0.4); 
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
+            position: relative; 
+            overflow: hidden; 
+        }
+        .logo-icon::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.3), transparent);
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+        }
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+        .logo-icon:hover {
+            transform: scale(1.15) rotate(-5deg);
+            box-shadow: 0 12px 32px rgba(14, 165, 233, 0.5);
+        }
+        .logo-icon svg { width: 26px; height: 26px; stroke-width: 2.5; }
+        .nav-center {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+        .nav-link {
+            padding: 10px 24px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #64748B;
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%) scaleX(0);
+            width: 80%;
+            height: 2px;
+            background: linear-gradient(90deg, #0EA5E9, #10B981);
+            border-radius: 2px;
+            transition: transform 0.3s ease;
+        }
+        .nav-link:hover {
+            color: #0EA5E9;
+            background: rgba(14, 165, 233, 0.05);
+        }
+        .nav-link:hover::before {
+            transform: translateX(-50%) scaleX(1);
+        }
+        .nav-link.active {
+            color: #0EA5E9;
+            background: rgba(14, 165, 233, 0.1);
+        }
+        .nav-link.active::before {
+            transform: translateX(-50%) scaleX(1);
+        }
+        .nav-link-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s ease;
+        }
+        .nav-link-icon svg {
+            width: 20px;
+            height: 20px;
+            stroke-width: 2;
+        }
+        .nav-link:hover .nav-link-icon {
+            transform: translateY(-2px);
+        }
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 16px 8px 8px;
+            background: white;
+            border-radius: 50px;
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+        .user-info:hover {
+            border-color: rgba(14, 165, 233, 0.4);
+            box-shadow: 0 4px 16px rgba(14, 165, 233, 0.15);
+            transform: translateY(-1px);
+        }
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #0EA5E9 0%, #10B981 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 16px;
+            box-shadow: 0 2px 8px rgba(14, 165, 233, 0.3);
+            transition: transform 0.3s ease;
+        }
+        .user-info:hover .user-avatar {
+            transform: scale(1.05);
+        }
+        .user-details {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 2px;
+        }
+        .user-name {
+            font-weight: 600;
+            color: #0F172A;
+            font-size: 14px;
+            line-height: 1;
+        }
+        .user-role {
+            font-size: 11px;
+            color: #94A3B8;
+            font-weight: 500;
+            line-height: 1;
+        }
+        .action-buttons {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .icon-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: white;
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+        .icon-btn svg {
+            width: 20px;
+            height: 20px;
+            stroke-width: 2;
+        }
+        .icon-btn:hover {
+            background: #0EA5E9;
+            border-color: #0EA5E9;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(14, 165, 233, 0.3);
+        }
+        .icon-btn.logout {
+            background: rgba(239, 68, 68, 0.05);
+            border-color: rgba(239, 68, 68, 0.2);
+            color: #DC2626;
+        }
+        .icon-btn.logout:hover {
+            background: #DC2626;
+            border-color: #DC2626;
+            color: white;
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+        }
+        .btn { padding: 8px 16px; border: none; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px; }
+        .btn svg { width: 16px; height: 16px; stroke-width: 2; }
+        .btn-ghost { background: transparent; color: #6b7280; border: 1px solid #e5e7eb; text-decoration: none; }
+        .btn-ghost:hover { background: #f9fafb; color: #1a1a1a; }
+        .btn-primary { background: #4ECDC4; color: white; }
+        .btn-primary:hover { background: #45b8b0; }
+        .btn-danger { background: #ef4444; color: white; }
+        .btn-danger:hover { background: #dc2626; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 32px 24px; }
+        .page-header { margin-bottom: 32px; }
+        .page-title { 
+            font-size: 36px; 
+            font-weight: 800; 
+            background: linear-gradient(135deg, #0F172A 0%, #0EA5E9 100%); 
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent; 
+            background-clip: text; 
+            margin-bottom: 8px; 
+            animation: fadeIn 0.5s ease-out; 
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .page-subtitle { 
+            color: #64748B; 
+            font-size: 16px; 
+            animation: fadeIn 0.6s ease-out 0.1s backwards; 
+        }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 24px; margin-bottom: 40px; }
+        .stat-card { 
+            background: white; 
+            padding: 28px; 
+            border-radius: 20px; 
+            border: 1px solid rgba(226, 232, 240, 0.8); 
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
+            position: relative; 
+            overflow: hidden; 
+            animation: fadeInUp 0.6s ease-out backwards; 
+        }
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #0EA5E9, #06B6D4, #10B981);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s ease;
+        }
+        .stat-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(14, 165, 233, 0.15);
+            border-color: rgba(14, 165, 233, 0.3);
+        }
+        .stat-card:hover::before {
+            transform: scaleX(1);
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .stat-value { font-size: 32px; font-weight: 700; margin-bottom: 4px; }
+        .stat-label { color: #6b7280; font-size: 14px; }
+        .tabs { 
+            background: white; 
+            border-radius: 20px; 
+            border: 1px solid rgba(226, 232, 240, 0.8); 
+            overflow: hidden; 
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); 
+            transition: all 0.4s ease; 
+            animation: fadeInUp 0.5s ease-out 0.2s backwards; 
+        }
+        .tabs:hover {
+            box-shadow: 0 20px 40px rgba(14, 165, 233, 0.1);
+            transform: translateY(-4px);
+        }
+        .tab-nav { 
+            display: flex; 
+            border-bottom: 1px solid rgba(241, 245, 249, 0.8); 
+            background: linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%); 
+            position: relative; 
+        }
+        .tab-nav::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 28px;
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, #0EA5E9, #10B981);
+            border-radius: 3px;
+        }
+        .tab-button { flex: 1; padding: 16px 24px; border: none; background: transparent; color: #6b7280; font-weight: 500; cursor: pointer; border-bottom: 3px solid transparent; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .tab-button svg { width: 18px; height: 18px; stroke-width: 2; }
+        .tab-button.active { 
+            color: #0EA5E9; 
+            background: white; 
+            border-bottom-color: #0EA5E9; 
+            box-shadow: 0 -2px 8px rgba(14, 165, 233, 0.1); 
+        }
+        .tab-content { 
+            padding: 28px; 
+            display: none; 
+        }
+        .tab-content.active { display: block; }
+        .data-table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            margin-top: 16px; 
+            border-radius: 12px; 
+            overflow: hidden; 
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04); 
+        }
+        .data-table th, .data-table td { 
+            text-align: left; 
+            padding: 14px 18px; 
+            border-bottom: 1px solid rgba(226, 232, 240, 0.8); 
+        }
+        .data-table th { 
+            background: linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%); 
+            font-weight: 600; 
+            color: #374151; 
+            font-size: 14px; 
+        }
+        .data-table tr:hover { 
+            background: linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%); 
+            transform: translateX(4px); 
+            transition: all 0.3s ease; 
+        }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
+        .modal.active { display: flex; }
+        .modal-content { 
+            background: rgba(255, 255, 255, 0.95); 
+            backdrop-filter: blur(20px); 
+            padding: 32px; 
+            border-radius: 20px; 
+            max-width: 600px; 
+            width: 90%; 
+            max-height: 90vh; 
+            overflow-y: auto; 
+            border: 1px solid rgba(226, 232, 240, 0.8); 
+            box-shadow: 0 20px 40px rgba(14, 165, 233, 0.15); 
+            animation: fadeInUp 0.5s ease-out; 
+        }
+        .modal-header { 
+            font-size: 24px; 
+            font-weight: 700; 
+            margin-bottom: 24px; 
+            background: linear-gradient(135deg, #0F172A 0%, #0EA5E9 100%); 
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent; 
+            background-clip: text; 
+        }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 500; color: #374151; font-size: 14px; }
+        .form-group input, .form-group select, .form-group textarea { 
+            width: 100%; 
+            padding: 14px 18px; 
+            border: 2px solid rgba(226, 232, 240, 0.8); 
+            border-radius: 12px; 
+            font-size: 15px; 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+            background: white; 
+            font-family: inherit; 
+        }
+        .form-group input:hover, .form-group select:hover, .form-group textarea:hover {
+            border-color: rgba(14, 165, 233, 0.3);
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #0EA5E9;
+            box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.1);
+            transform: translateY(-2px);
+        }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .actions { display: flex; gap: 8px; }
+        .alert {
+            padding: 18px 20px;
+            margin-bottom: 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            animation: slideInDown 0.5s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+        .alert::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+        }
+        .alert-success {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.05) 100%);
+            color: #047857;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+        .alert-success::before {
+            background: linear-gradient(180deg, #10B981, #059669);
+        }
+        .alert-error {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(220, 38, 38, 0.05) 100%);
+            color: #B91C1C;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+        .alert-error::before {
+            background: linear-gradient(180deg, #EF4444, #DC2626);
+        }
+        @keyframes slideInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .alert svg {
+            width: 16px;
+            height: 16px;
+            stroke-width: 2;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <a href="/" class="logo">
+                <div class="logo-icon">
+                    <i data-lucide="heart-pulse"></i>
+                </div>
+                MediCare Admin
+            </a>
+            <nav class="nav-center">
+                <a href="/" class="nav-link">
+                    <span class="nav-link-icon"><i data-lucide="home"></i></span>
+                    <span>Home</span>
+                </a>
+                <a href="/admin-dashboard.html" class="nav-link active">
+                    <span class="nav-link-icon"><i data-lucide="layout-dashboard"></i></span>
+                    <span>Dashboard</span>
+                </a>
+            </nav>
+            
+            <div class="user-menu">
+                <div class="action-buttons">
+                    <button class="icon-btn" title="Notifications">
+                        <i data-lucide="bell"></i>
+                    </button>
+                </div>
+                <div class="user-info">
+                    <div class="user-avatar" id="user-avatar">A</div>
+                    <div class="user-details">
+                        <div class="user-name" id="user-name">Admin</div>
+                        <div class="user-role">Administrator</div>
+                    </div>
+                </div>
+                <button class="icon-btn logout" onclick="logout()" title="Logout">
+                    <i data-lucide="log-out"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+    <div class="container">
+        <div class="page-header">
+            <h1 class="page-title">Admin Dashboard</h1>
+            <p class="page-subtitle">Complete system management and control</p>
+        </div>
+        <div class="stats-grid">
+            <div class="stat-card"><div class="stat-value" id="total-patients">0</div><div class="stat-label">Total Patients</div></div>
+            <div class="stat-card"><div class="stat-value" id="total-doctors">0</div><div class="stat-label">Total Doctors</div></div>
+            <div class="stat-card"><div class="stat-value" id="total-appointments">0</div><div class="stat-label">Total Appointments</div></div>
+            <div class="stat-card"><div class="stat-value" id="total-records">0</div><div class="stat-label">Medical Records</div></div>
+        </div>
+        <div class="tabs">
+            <div class="tab-nav">
+                <button class="tab-button active" onclick="switchTab('patients')"><i data-lucide="users"></i> Patients</button>
+                <button class="tab-button" onclick="switchTab('doctors')"><i data-lucide="stethoscope"></i> Doctors</button>
+                <button class="tab-button" onclick="switchTab('appointments')"><i data-lucide="calendar"></i> Appointments</button>
+                <button class="tab-button" onclick="switchTab('records')"><i data-lucide="clipboard"></i> Records</button>
+            </div>
+            <div id="patients-tab" class="tab-content active">
+                <button class="btn btn-primary" onclick="showAddPatientModal()">+ Add Patient</button>
+                <table id="patients-table" class="data-table"><thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>DOB</th><th>Actions</th></tr></thead><tbody id="patients-body"></tbody></table>
+            </div>
+            <div id="doctors-tab" class="tab-content">
+                <button class="btn btn-primary" onclick="showAddDoctorModal()">+ Add Doctor</button>
+                <table id="doctors-table" class="data-table"><thead><tr><th>Name</th><th>Specialization</th><th>Email</th><th>Phone</th><th>Actions</th></tr></thead><tbody id="doctors-body"></tbody></table>
+            </div>
+            <div id="appointments-tab" class="tab-content">
+                <table id="appointments-table" class="data-table"><thead><tr><th>Patient</th><th>Doctor</th><th>Date & Time</th><th>Status</th><th>Actions</th></tr></thead><tbody id="appointments-body"></tbody></table>
+            </div>
+            <div id="records-tab" class="tab-content">
+                <table id="records-table" class="data-table"><thead><tr><th>Patient</th><th>Doctor</th><th>Diagnosis</th><th>Date</th><th>Actions</th></tr></thead><tbody id="records-body"></tbody></table>
+            </div>
+        </div>
+    </div>
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header" id="modal-title">Modal</div>
+            <div id="modal-body"></div>
+        </div>
+    </div>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="admin.js"></script>
+    <script>
+        // Initialize Lucide icons
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        });
+    </script>
+</body>
+</html>
